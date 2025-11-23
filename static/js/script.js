@@ -1,75 +1,70 @@
-const seriesSelect = document.getElementById("seriesSelect");
-const subseriesSelect = document.getElementById("subseriesSelect");
-const modelSelect = document.getElementById("modelSelect");
-const verifyBtn = document.getElementById("verifyBtn");
+console.log("JS chargé correctement.");
 
-seriesSelect.addEventListener("change", async () => {
-  const series = seriesSelect.value;
-  subseriesSelect.innerHTML = '<option value="">Select Subseries</option>';
-  modelSelect.innerHTML = '<option value="">Select Model</option>';
-  if (!series) return;
+const consoleSelect = document.getElementById("console");
+const modelSelect = document.getElementById("model");
+const checkBtn = document.getElementById("checkBtn");
+const resultBox = document.getElementById("result");
 
-  const res = await fetch("/get_subseries", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ series })
-  });
-  const data = await res.json();
-  data.forEach(sub => {
-    const opt = document.createElement("option");
-    opt.value = sub;
-    opt.textContent = sub;
-    subseriesSelect.appendChild(opt);
-  });
-});
 
-subseriesSelect.addEventListener("change", async () => {
-  const series = seriesSelect.value;
-  const subseries = subseriesSelect.value;
-  modelSelect.innerHTML = '<option value="">Select Model</option>';
-  if (!subseries) return;
+// 🔹 Charger dynamiquement les modèles selon la console
+consoleSelect.addEventListener("change", function () {
+    const selectedConsole = this.value;
 
-  const res = await fetch("/get_models", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ series, subseries })
-  });
-  const data = await res.json();
-  data.forEach(model => {
-    const opt = document.createElement("option");
-    opt.value = model;
-    opt.textContent = model;
-    modelSelect.appendChild(opt);
-  });
-});
+    modelSelect.innerHTML = "<option value=''>Chargement...</option>";
+    resultBox.innerHTML = "";
 
-verifyBtn.addEventListener("click", async () => {
-  const model = modelSelect.value;
-  const cfw = document.getElementById("cfw");
-  const cex = document.getElementById("cex");
-  const dex = document.getElementById("dex");
+    if (selectedConsole === "") {
+        modelSelect.innerHTML = "<option value=''>-- Choisir une console d'abord --</option>";
+        return;
+    }
 
-  if (!model) {
-    cfw.textContent = "—";
-    cex.textContent = "—";
-    dex.textContent = "—";
-    return;
-  }
+    fetch("/get_models", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ console: selectedConsole })
+    })
+    .then(res => res.json())
+    .then(data => {
+        modelSelect.innerHTML = "<option value=''>-- Sélectionner un modèle --</option>";
 
-  try {
-    const res = await fetch("/check", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model })
+        data.models.forEach(m => {
+            const opt = document.createElement("option");
+            opt.value = m;
+            opt.textContent = m;
+            modelSelect.appendChild(opt);
+        });
     });
-    const data = await res.json();
-    cfw.textContent = data.cfw;
-    cex.textContent = data.cex;
-    dex.textContent = data.dex;
-  } catch (err) {
-    console.error("Error:", err);
-    cfw.textContent = "Error";
-    cex.textContent = "Error";
-    dex.textContent = "Error";
-  }
+});
+
+
+// 🔹 Vérifier les hacks disponibles
+checkBtn.addEventListener("click", function () {
+    const selectedConsole = consoleSelect.value;
+    const selectedModel = modelSelect.value;
+
+    if (selectedConsole === "") {
+        resultBox.innerHTML = "❌ Veuillez sélectionner une console.";
+        return;
+    }
+
+    if (selectedModel === "") {
+        resultBox.innerHTML = "❌ Veuillez sélectionner un modèle.";
+        return;
+    }
+
+    fetch("/get_hacks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ console: selectedConsole, model: selectedModel })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.hacks || data.hacks.length === 0) {
+            resultBox.innerHTML = "⚠ Aucun hack trouvé pour ce modèle.";
+            return;
+        }
+
+        // Affiche la liste des hacks
+        resultBox.innerHTML = `<strong>Hacks disponibles :</strong><br>• ${data.hacks.join("<br>• ")}`;
+    });
 });

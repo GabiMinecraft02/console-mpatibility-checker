@@ -1,41 +1,80 @@
+/* --- RESET SIMPLE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- PAGE --- */
 body {
-  background: #0f1720;
-  color: #e6eef6;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding-top: 5%;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 40px 20px;
+    padding-bottom: 250px; /* espace en bas pour que les selects ne soient jamais coupés */
+    text-align: center;
 }
 
-.container {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 30px;
-  border-radius: 12px;
-  width: 80%;
-  max-width: 600px;
-  margin: auto;
+h1 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 700;
 }
 
-select, button {
-  margin: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
+/* --- BOX PRINCIPALE --- */
+.box {
+    background: white;
+    width: 90%;
+    max-width: 480px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.15);
+    text-align: left;
 }
 
+/* --- LABELS --- */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* --- SELECTS --- */
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    font-size: 16px;
+    background: #fff;
+
+    /* important pour les longues listes */
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* --- BOUTON --- */
 button {
-  background: #06b6d4;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border: none;
+    background: #4285f4;
+    color: white;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 button:hover {
-  background: #0891b2;
+    background: #296ecb;
 }
 
-.result {
-  margin-top: 20px;
-  background: rgba(0,0,0,0.2);
-  padding: 15px;
-  border-radius: 10px;
+/* --- RESULTAT --- */
+#result {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: bold;
 }
